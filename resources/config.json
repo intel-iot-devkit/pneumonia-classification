@@ -1,0 +1,11 @@
+{
+
+    "inputs": [
+	    {
+            "image": "../resources/NORMAL/*.jpeg"
+        },
+        {
+            "image": "../resources/PNEUMONIA/*.jpeg"
+        }
+    ]
+}
