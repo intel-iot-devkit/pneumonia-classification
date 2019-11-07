@@ -28,7 +28,7 @@ This reference implementation showcases a health care application performing pne
    uname -a
   ```
 
-- Intel® Distribution of OpenVINO™ toolkit 2019 R2 release
+- Intel® Distribution of OpenVINO™ toolkit 2019 R3 release
 * Jupyter* Notebook v5.7.0
 
 ## How It works
@@ -97,7 +97,7 @@ You must configure the environment to use the Intel® Distribution of OpenVINO�
 
     source /opt/intel/openvino/bin/setupvars.sh -pyver 3.5
     
-__Note__: This command needs to be executed only once in the terminal where the application will be executed. If the terminal is closed, the command needs to be executed again.
+__NOTE__: This command needs to be executed only once in the terminal where the application will be executed. If the terminal is closed, the command needs to be executed again.
 
 ## Run the application on Jupyter*
 
@@ -106,6 +106,36 @@ __Note__: This command needs to be executed only once in the terminal where the 
       cd <path_to_the_pneumonia-classification-python_directory>/Jupyter
 
       jupyter notebook
+    **NOTE:** Before running the application on the FPGA, set the environment variables and  program the AOCX (bitstream) file.<br>
+
+    Set the Board Environment Variable to the proper directory:
+
+    ```
+    export AOCL_BOARD_PACKAGE_ROOT=/opt/intel/openvino/bitstreams/a10_vision_design_sg<#>_bitstreams/BSP/a10_1150_sg<#>
+    ```
+    **NOTE:** If you do not know which version of the board you have, please refer to the product label on the fan cover side or by the product SKU: Mustang-F100-A10-R10 => SG1; Mustang-F100-A10E-R10 => SG2 <br>
+
+    Set the Board Environment Variable to the proper directory:
+    ```
+    export QUARTUS_ROOTDIR=/home/<user>/intelFPGA/18.1/qprogrammer
+    ```
+    Set the remaining environment variables:
+    ```
+    export PATH=$PATH:/opt/altera/aocl-pro-rte/aclrte-linux64/bin:/opt/altera/aocl-pro-rte/aclrte-linux64/host/linux64/bin:/home/<user>/intelFPGA/18.1/qprogrammer/bin
+    export INTELFPGAOCLSDKROOT=/opt/altera/aocl-pro-rte/aclrte-linux64
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$AOCL_BOARD_PACKAGE_ROOT/linux64/lib
+    export CL_CONTEXT_COMPILER_MODE_INTELFPGA=3
+    source /opt/altera/aocl-pro-rte/aclrte-linux64/init_opencl.sh
+    ```
+    **NOTE:** It is recommended to create your own script for your system to aid in setting up these environment variables. It will be run each time you need a new terminal or restart your system.
+
+    The bitstreams for HDDL-F can be found under the `/opt/intel/openvino/bitstreams/a10_vision_design_sg<#>_bitstreams/` directory.<br><br>To program the bitstream use the below command:<br>
+    ```
+    aocl program acl0 /opt/intel/openvino/bitstreams/a10_vision_design_sg<#>_bitstreams/2019R3_PV_PL1_FP11_RMNet.aocx
+    ```
+
+    For more information on programming the bitstreams, please refer the [link](https://software.intel.com/en-us/articles/OpenVINO-Install-Linux-FPGA#inpage-nav-11).
+
 
 **Follow the steps to run the code on Jupyter:**
 
@@ -123,7 +153,7 @@ __Note__: This command needs to be executed only once in the terminal where the 
        %env MODEL=../resources/FP32/model.xml
 
 4. If user wants to save the output result files (output images, results.txt and stats.txt) in specific directory then export environment variable (directory) in the next cell as given below and press **Shift+Enter**.<br>
-   **Note:** If user skips this step then output files (output images, results.txt and stats.txt) are saved in the __output__ directory itself.<br>
+   **NOTE:** If user skips this step then output files (output images, results.txt and stats.txt) are saved in the __output__ directory itself.<br>
    
        %env OUTPUT = <path_to_the_required_directory_to_save_the_output_files> 
     
@@ -132,7 +162,7 @@ __Note__: This command needs to be executed only once in the terminal where the 
     **stats.txt**: This file contains the total average inference time
     
 5. If user wants to specify the number of iteration value and performance counts, then export these environment variables(ITERATION_NUM, PERFS_COUNT) as given below to get accurate results and press **Shift+Enter**.<br>
-   **Note:** If user skips this step, these values are set to default values.<br>
+   **NOTE:** If user skips this step, these values are set to default values.<br>
    
        %env ITERATION_NUM = 20
        %env PERFS_COUNT = True
@@ -174,7 +204,13 @@ __Note__: This command needs to be executed only once in the terminal where the 
       
             %env MODEL=../resources/FP16/model.xml
 
-4. To run the application on multiple devices: <br>
+4. To run the application on **Intel® Arria® 10 FPGA**:
+      * Change the **%env DEVICE = CPU** to **%env DEVICE = HETERO:FPGA,CPU**
+      * With the **floating point precision 16 (FP16)**, change the path of the model in the environment variable **MODEL** as given below:<br>
+
+            %env MODEL=../resources/FP16/model.xml
+
+5. To run the application on multiple devices: <br>
    For example:
       * Change the **%env DEVICE = CPU** to **%env DEVICE = MULTI:CPU,GPU,MYRIAD**
       * With the **floating point precision 16 (FP16)**, change the path of the model in the environment variable **MODEL** as given below: <br>
