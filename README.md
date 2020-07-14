@@ -3,7 +3,7 @@
 
 | Details               |                   |
 | --------------------- | ----------------- |
-| Target OS:            | Ubuntu* 16.04 LTS |
+| Target OS:            | Ubuntu* 18.04 LTS |
 | Programming Language: | Python* 3.5       |
 | Time to Complete:     | 30 min            |
 
@@ -20,7 +20,7 @@ This reference implementation showcases a health care application by performing 
 
 ### Software
 
-- [Ubuntu\* 16.04 LTS](http://releases.ubuntu.com/16.04/)<br>
+- [Ubuntu\* 18.04 LTS](http://releases.ubuntu.com/18.04/)<br>
   NOTE: Use kernel versions 4.14+ with this software.<br> 
   Determine the kernel version with the below uname command. 
 
@@ -28,7 +28,7 @@ This reference implementation showcases a health care application by performing 
    uname -a
   ```
 
-- Intel® Distribution of OpenVINO™ toolkit 2019 R3 release
+- Intel® Distribution of OpenVINO™ toolkit 2020 R3 release
 
 ## How It works
 
@@ -44,7 +44,7 @@ The application uses the Inference Engine included in the Intel® Distribution o
 Clone the reference implementation:
 
     sudo apt-get update && sudo apt-get install git
-    git clone https://github.com/intel-iot-devkit/pneumonia-classification.git
+    git clone https://github.com/intel-iot-devkit/pneumonia-classification.git 
 
 ### Install Intel® Distribution of OpenVINO™ toolkit
 
@@ -94,7 +94,7 @@ To use any other image, specify the path in config.json file
 ## Setup the environment
 You must configure the environment to use the Intel® Distribution of OpenVINO™ toolkit one time per session by running the following command:
 
-    source /opt/intel/openvino/bin/setupvars.sh -pyver 3.5
+    source /opt/intel/openvino/bin/setupvars.sh
     
 __Note__: This command needs to be executed only once in the terminal where the application will be executed. If the terminal is closed, the command needs to be executed again.
     
@@ -130,7 +130,7 @@ To save the results in a specific directory
 
 ### Run on Different Hardware
 
-A user can specify a target device to run on by using the device command-line argument `-d` followed by one of the values `CPU`, `GPU`,`MYRIAD`, `HDDL` or `HETERO:FPGA,CPU`.<br>
+A user can specify a target device to run on by using the device command-line argument `-d` followed by one of the values `CPU`, `GPU`,`MYRIAD` or `HDDL`<br>
 To run with multiple devices use -d MULTI:device1,device2. For example: `-d MULTI:CPU,GPU,MYRIAD`
 
 #### Run on the CPU
@@ -174,6 +174,7 @@ python3 pneumonia_classification.py -m ../resources/FP16/model.xml -d HDDL
 
 **Note:** The Intel® Movidius™ VPU can only run FP16 models. The model that is passed to the application, through the `-m <path_to_model>` command-line argument, must be of data type FP16.
 
+<!--
 #### Run on the Intel® Arria® 10 FPGA
 
 Before running the application on the FPGA, set the environment variables and  program the AOCX (bitstream) file.<br>
@@ -201,7 +202,7 @@ source /opt/altera/aocl-pro-rte/aclrte-linux64/init_opencl.sh
 
 The bitstreams for HDDL-F can be found under the `/opt/intel/openvino/bitstreams/a10_vision_design_sg<#>_bitstreams/` directory.<br><br>To program the bitstream use the below command:<br>
 ```
-aocl program acl0 /opt/intel/openvino/bitstreams/a10_vision_design_sg<#>_bitstreams/2019R3_PV_PL1_FP11_RMNet.aocx
+aocl program acl0 /opt/intel/openvino/bitstreams/a10_vision_design_sg<#>_bitstreams/2020-3_PL2_FP11_RMNet.aocx
 ```
 
 For more information on programming the bitstreams, please refer the [link](https://software.intel.com/en-us/articles/OpenVINO-Install-Linux-FPGA#inpage-nav-11).
@@ -210,3 +211,4 @@ To run the application on the FPGA with floating point precision 16 (FP16), use 
 ```
 python3 pneumonia_classification.py -m ../resources/FP16/model.xml -d HETERO:FPGA,CPU
 ```
+-->

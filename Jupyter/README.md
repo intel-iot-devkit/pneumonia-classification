@@ -3,7 +3,7 @@
 
 | Details               |                   |
 | --------------------- | ----------------- |
-| Target OS:            | Ubuntu* 16.04 LTS |
+| Target OS:            | Ubuntu* 18.04 LTS |
 | Programming Language: | Python* 3.5       |
 | Time to Complete:     | 30 min            |
 
@@ -20,7 +20,7 @@ This reference implementation showcases a health care application performing pne
 
 ### Software
 
-- [Ubuntu\* 16.04 LTS](http://releases.ubuntu.com/16.04/)<br>
+- [Ubuntu\* 18.04 LTS](http://releases.ubuntu.com/18.04/)<br>
   NOTE: Use kernel versions 4.14+ with this software.<br> 
   Determine the kernel version with the below uname command. 
 
@@ -28,7 +28,7 @@ This reference implementation showcases a health care application performing pne
    uname -a
   ```
 
-- Intel® Distribution of OpenVINO™ toolkit 2019 R3 release
+- Intel® Distribution of OpenVINO™ toolkit 2020 R3 release
 * Jupyter* Notebook v5.7.0
 
 ## How It works
@@ -95,7 +95,7 @@ To use any other image, specify the path in config.json file
 ## Setup the environment
 You must configure the environment to use the Intel® Distribution of OpenVINO™ toolkit one time per session by running the following command:
 
-    source /opt/intel/openvino/bin/setupvars.sh -pyver 3.5
+    source /opt/intel/openvino/bin/setupvars.sh
     
 __NOTE__: This command needs to be executed only once in the terminal where the application will be executed. If the terminal is closed, the command needs to be executed again.
 
@@ -106,6 +106,7 @@ __NOTE__: This command needs to be executed only once in the terminal where the 
       cd <path_to_the_pneumonia-classification-python_directory>/Jupyter
 
       jupyter notebook
+<!--
     **NOTE:** Before running the application on the FPGA, set the environment variables and  program the AOCX (bitstream) file.<br>
 
     Set the Board Environment Variable to the proper directory:
@@ -136,7 +137,7 @@ __NOTE__: This command needs to be executed only once in the terminal where the 
 
     For more information on programming the bitstreams, please refer the [link](https://software.intel.com/en-us/articles/OpenVINO-Install-Linux-FPGA#inpage-nav-11).
 
-
+-->
 **Follow the steps to run the code on Jupyter:**
 
 ![Jupyter Notebook](../docs/images/jupyter.png)
@@ -203,13 +204,13 @@ __NOTE__: This command needs to be executed only once in the terminal where the 
       * The Intel® Movidius™ VPU can only run FP16 models. Hence change the environment variable for the model as shown below. <br>
       
             %env MODEL=../resources/FP16/model.xml
-
+<!--
 4. To run the application on **Intel® Arria® 10 FPGA**:
       * Change the **%env DEVICE = CPU** to **%env DEVICE = HETERO:FPGA,CPU**
       * With the **floating point precision 16 (FP16)**, change the path of the model in the environment variable **MODEL** as given below:<br>
 
             %env MODEL=../resources/FP16/model.xml
-
+-->
 5. To run the application on multiple devices: <br>
    For example:
       * Change the **%env DEVICE = CPU** to **%env DEVICE = MULTI:CPU,GPU,MYRIAD**

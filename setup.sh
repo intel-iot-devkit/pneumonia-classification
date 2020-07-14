@@ -22,6 +22,8 @@
 
 #Install the dependencies
 sudo apt-get update
+sudo apt-get install python3-bs4
+sudo apt-get install python3-matplotlib
 sudo apt-get install python3-pip
 sudo pip3 install numpy jupyter
 
@@ -29,6 +31,6 @@ BASE_DIR=`pwd`
 
 #Optimize the model
 cd /opt/intel/openvino/deployment_tools/model_optimizer/
-python3 mo_tf.py -m $BASE_DIR/resources/model/model.pb --input_shape=[1,224,224,3] --data_type FP32 -o $BASE_DIR/resources/FP32 --mean_values [123.75,116.28,103.58] --scale_values [58.395,57.12,57.375]
-python3 mo_tf.py -m $BASE_DIR/resources/model/model.pb --input_shape=[1,224,224,3] --data_type FP16 -o $BASE_DIR/resources/FP16 --mean_values [123.75,116.28,103.58] --scale_values [58.395,57.12,57.375]
+python3 mo_tf.py -m $BASE_DIR/resources/model/model.pb --input_shape=[1,224,224,3] --data_type FP32 -o $BASE_DIR/resources/FP32 --mean_values [123.75,116.28,103.58] --scale_values [58.395,57.12,57.375] 
+python3 mo_tf.py -m $BASE_DIR/resources/model/model.pb --input_shape=[1,224,224,3] --data_type FP16 -o $BASE_DIR/resources/FP16 --mean_values [123.75,116.28,103.58] --scale_values [58.395,57.12,57.375] 
 

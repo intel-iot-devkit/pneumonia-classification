@@ -50,7 +50,6 @@ except ImportError:
 
 # CONSTANTS
 TARGET_DEVICE = "CPU"
-CPU_EXTENSION = ""
 CONFIG_FILE = '../resources/config.json'
 output_dir = "../output"
 number_iter = 20
@@ -282,14 +281,6 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
     return x
 
 
-def bname():
-    global model_xml
-    bs = BeautifulSoup(open(model_xml), 'xml')
-    bnTag = bs.findAll(attrs={"id": "365"})
-    bn = bnTag[0]['name']
-    return bn
-
-
 def main():
     global CONFIG_FILE
     global model_xml
@@ -307,7 +298,7 @@ def main():
     config = json.loads(open(CONFIG_FILE).read())
 
     infer_network = Network()
-    n, c, h, w = infer_network.load_model(model_xml, TARGET_DEVICE, 1, 1, 0, CPU_EXTENSION)[1]
+    n, c, h, w = infer_network.load_model(model_xml, TARGET_DEVICE, 1, 1, 0)[1]
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir, exist_ok=True)
     f = open(os.path.join(output_dir, 'result' + '.txt'), 'w')
@@ -341,9 +332,9 @@ def main():
             time_images.append(avg_time)
 
         if 'PNEUMONIA' in item['image']:
-            bn = bname()
+            bn = "relu_1/Relu"
             infer_network.load_model_for_activation_map(bn, 0, TARGET_DEVICE)
-            fc = "predictions_1/MatMul"
+            fc = "predictions_1/BiasAdd/Add"
             # iterate over the pneumonia cases
             for file in files:
                 # read the image

@@ -49,7 +49,6 @@ except ImportError:
 
 
 # CONSTANTS
-CPU_EXTENSION = ""
 CONFIG_FILE = '../resources/config.json'
 
 
@@ -280,14 +279,6 @@ def img_to_array(img, data_format='channels_last', dtype='float32'):
     return x
 
 
-def bname():
-    global model_xml
-    bs = BeautifulSoup(open(model_xml), 'xml')
-    bnTag = bs.findAll(attrs={"id": "365"})
-    bn = bnTag[0]['name']
-    return bn
-
-
 def main():
     global CONFIG_FILE, model_xml
     log.basicConfig(format="[ %(levelname)s ] %(message)s", level=log.INFO, stream=sys.stdout)
@@ -301,7 +292,7 @@ def main():
     config = json.loads(open(CONFIG_FILE).read())
 
     infer_network = Network()
-    n, c, h, w = infer_network.load_model(model_xml, device, 1, 1, 0, CPU_EXTENSION)[1]
+    n, c, h, w = infer_network.load_model(model_xml, device, 1, 1, 0)[1]
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir, exist_ok=True)
     f = open(os.path.join(args.output_dir, 'result' + '.txt'), 'w')
@@ -334,9 +325,9 @@ def main():
             time_images.append(avg_time)
 
         if 'PNEUMONIA' in item['image']:
-            bn = bname()
+            bn = "relu_1/Relu"
             infer_network.load_model_for_activation_map(bn, 0, device)
-            fc = "predictions_1/MatMul"
+            fc = "predictions_1/BiasAdd/Add"
             # iterate over the pneumonia cases
             for file in files:
                 # read the image
@@ -347,8 +338,9 @@ def main():
                 # Class Activation Map
                 cam = infer_network.visualize_class_activation_map_openvino(res, bn, fc)
                 fig = plt.figure(figsize=(18, 16), dpi=80, facecolor='w', edgecolor='k')
+
                 # Visualize the CAM heatmap
-                cam /= np.max(cam)
+                cam = (cam - np.min(cam))/(np.max(cam)-np.min(cam))
                 fig.add_subplot(1, 2, 1)
                 # plt.imshow(cam, cmap=colormap)
                 # plt.colorbar(fraction=0.046, pad=0.04)

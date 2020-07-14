@@ -28,7 +28,6 @@ import logging as log
 from openvino.inference_engine import IENetwork, IECore
 import numpy as np
 
-
 class Network:
     """
     Load and configure inference plugins for the specified target devices
@@ -43,11 +42,10 @@ class Network:
         self.net_plugin = None
         self.infer_request_handle = None
 
-    def load_model(self, model, device, input_size, output_size, num_requests, cpu_extension=None, plugin=None):
+    def load_model(self, model, device, input_size, output_size, num_requests, plugin=None):
         """
          Loads a network and an image to the Inference Engine plugin.
         :param model: .xml file of pre trained model
-        :param cpu_extension: extension for the CPU device
         :param device: Target device
         :param input_size: Number of input layers
         :param output_size: Number of output layers
@@ -66,12 +64,10 @@ class Network:
         else:
             self.plugin = plugin
 
-        if cpu_extension and 'CPU' in device:
-            self.plugin.add_extension(cpu_extension, "CPU")
 
         # Read IR
         log.info("Reading IR...")
-        self.net = IENetwork(model=model_xml, weights=model_bin)
+        self.net = self.plugin.read_network(model_xml, model_bin)
         log.info("Loading IR to the plugin...")
 
         if "CPU" in device:
@@ -83,9 +79,7 @@ class Network:
                           "the plugin for specified device {}:\n {}".
                           format(device,
                                  ', '.join(not_supported_layers)))
-                log.error("Please try to specify cpu extensions library path"
-                          " in command line parameters using -l "
-                          "or --cpu_extension command line argument")
+
                 sys.exit(1)
 
         if num_requests == 0:
@@ -95,7 +89,7 @@ class Network:
             self.net_plugin = self.plugin.load_network(network=self.net, num_requests=num_requests, device_name=device)
 
         self.input_blob = next(iter(self.net.inputs))
-        self.out_blob = next(iter(self.net.outputs))
+        self.out_blob = "predictions_1/Sigmoid"
         assert len(self.net.inputs.keys()) == input_size, \
             "Supports only {} input topologies".format(len(self.net.inputs))
         assert len(self.net.outputs) == output_size, \
@@ -170,7 +164,7 @@ class Network:
         :return: cam
         """
         res_bn = res[bn]
-        weights_fc = self.net.layers.get(fc).weights["weights"]
+        weights_fc = self.net.layers.get(fc).blobs["weights"]
         conv_outputs = res_bn[0, :, :, :]
         cam = np.zeros(dtype=np.float32, shape=(conv_outputs.shape[1:]))
         for i, w in enumerate(weights_fc):
@@ -189,6 +183,7 @@ class Network:
         self.net.add_outputs(bn)
         # name of the inputs and outputs
         self.input_blob = next(iter(self.net.inputs))
+        self.out_blob = "predictions_1/Sigmoid"
         # set the batch size
         self.net.batch_size = 1
         if num_requests == 0:
@@ -197,4 +192,3 @@ class Network:
         else:
             self.net_plugin = self.plugin.load_network(network=self.net, num_requests=num_requests, device_name=device)
         return self.get_input_shape()
-
